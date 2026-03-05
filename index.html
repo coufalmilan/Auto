@@ -369,23 +369,17 @@ VÝSTUP — vrať POUZE validní JSON v tomto přesném formátu (žádný jiný
   const resp=await fetch(WORKER_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4000,
-        tools:[{type:'web_search_20250305',name:'web_search'}],
-        messages:[{role:'user',content:prompt}]
-      })
+     body:JSON.stringify({ prompt })
     });
 
     clearInterval(stepInterval);
     setStep(5);
 
     const data=await resp.json();
-    if(data.error){throw new Error(data.error.message)}
+    if(data.error){throw new Error(data.error)}
 
-    // Extract text from response
-    let rawText='';
-    for(const block of data.content){
+    // Extrahuj JSON z Gemini odpovědi
+    const rawText = data.text || '';
       if(block.type==='text') rawText+=block.text;
     }
 
