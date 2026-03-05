@@ -380,7 +380,8 @@ VÝSTUP — vrať POUZE validní JSON v tomto přesném formátu (žádný jiný
 
     // Extrahuj JSON z Gemini odpovědi
     const rawText = data.text || '';
-    const jsonMatch=rawText.match(/\{[\s\S]*\}/);
+   const cleaned=rawText.replace(/```json|```/g,'').trim();
+const jsonMatch=cleaned.match(/\{[\s\S]*\}/);
     if(!jsonMatch) throw new Error('AI nevrátila validní JSON. Zkuste to znovu.');
     const d=JSON.parse(jsonMatch[0]);
 
