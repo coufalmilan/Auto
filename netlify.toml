@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+
+# Přesměrování pro zachování starých GitHub Pages URL (volitelné)
+# [[redirects]]
+#   from = "https://coufalmilan.github.io/Auto/*"
+#   to = "https://YOUR-SITE.netlify.app/:splat"
+#   status = 301

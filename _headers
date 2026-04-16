@@ -1,0 +1,21 @@
+/*
+  # Zabraňuje clickjackingu — web nelze vložit do iframe
+  X-Frame-Options: DENY
+
+  # Zabraňuje MIME sniffingu (spuštění obrázku jako skriptu apod.)
+  X-Content-Type-Options: nosniff
+
+  # Neodesílá plnou URL v Referer hlavičce na třetí strany
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Zakáže přístup ke kameře, mikrofonu, geolokaci a dalším senzorům
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+
+  # Chrání před cross-origin útoky přes window reference
+  Cross-Origin-Opener-Policy: same-origin
+
+  # Content Security Policy — povoluje jen důvěryhodné zdroje
+  # Inline skripty a styly jsou povoleny kvůli single-file architektuře aplikace.
+  # Pokud v budoucnu oddělíš JS/CSS do vlastních souborů, nahraď 'unsafe-inline'
+  # za konkrétní hashe nebo nonce pro maximální bezpečnost.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://hidden-shape-fa54.coufal-milan.workers.dev; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
