@@ -819,8 +819,8 @@ function renderResult(d, years, investRate, kmYear, budget){
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
 
-  /* Graf */
-  if(d.yearly_table && d.yearly_table.length){
+  /* Graf — pokud Chart.js není k dispozici (CDN výpadek), graf se přeskočí */
+  if(d.yearly_table && d.yearly_table.length && typeof Chart !== 'undefined'){
     if(chartInst) chartInst.destroy();
     chartInst = new Chart(document.getElementById('mainChart'), {
       type: 'line',
