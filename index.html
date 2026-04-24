@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoAnalýza AI</title>
+<title>AutoAnalýza AI — Leasing vs. koupě ojetého auta</title>
 <meta name="description" content="Porovnejte operativní leasing s koupí ojetého auta. AI analýza celkových nákladů vlastnictví (TCO), investičního výnosu a doporučení od Google Gemini.">
 <link rel="canonical" href="https://autoanalyza.pages.dev/">
 <meta property="og:title" content="AutoAnalýza AI — Leasing vs. koupě ojetého auta">
@@ -12,436 +12,446 @@
 <meta property="og:url" content="https://autoanalyza.pages.dev/">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ─── Základní proměnné ──────────────────────────────────────────────── */
 :root {
-  --bg: #0b0e13;
-  --s1: #111520;
-  --s2: #171c28;
-  --s3: #1d2235;
-  --brd: #242b3d;
+  --bg:   #0b0e13;
+  --s1:   #111520;
+  --s2:   #171c28;
+  --s3:   #1d2235;
+  --brd:  #242b3d;
   --gold: #d4a843;
-  --gold2: #f0c96a;
+  --gold2:#f0c96a;
   --teal: #4ec9b0;
-  --red: #e05c5c;
-  --green: #56c77a;
-  --txt: #dfe4f0;
-  --muted: #6b738a;
-  --blue: #5b9cf6;
+  --red:  #e05c5c;
+  --green:#56c77a;
+  --txt:  #dfe4f0;
+  --muted:#6b738a;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100vh;background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;font-weight:300}
 
+/* ─── Reset & base ───────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;font-weight:300;line-height:1.6}
 body::before{
   content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 80% 50% at 20% -10%,rgba(212,168,67,.07),transparent),
-             radial-gradient(ellipse 60% 40% at 80% 110%,rgba(78,201,176,.06),transparent);
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%,rgba(212,168,67,.06),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 110%,rgba(78,201,176,.05),transparent);
   pointer-events:none;z-index:0;
 }
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 20px 100px}
 
-.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px 80px}
-
-/* HEADER */
-header{padding:52px 0 36px;border-bottom:1px solid var(--brd);margin-bottom:44px}
+/* ─── Header ─────────────────────────────────────────────────────────── */
+header{padding:52px 0 40px;border-bottom:1px solid var(--brd);margin-bottom:48px}
 .header-inner{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
-h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,3rem);font-weight:400;letter-spacing:-.02em;line-height:1}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:400;letter-spacing:-.02em;line-height:1}
 h1 em{color:var(--gold);font-style:italic}
-.tagline{font-size:.88rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:7px}
-.pill{background:var(--s2);border:1px solid var(--brd);padding:5px 13px;border-radius:20px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--teal);letter-spacing:.06em}
+.tagline{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-top:8px}
+.badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--s2);border:1px solid var(--brd);
+  padding:5px 13px;border-radius:20px;
+  font-family:'IBM Plex Mono',monospace;font-size:.75rem;
+  color:var(--teal);letter-spacing:.06em;cursor:pointer;
+  transition:border-color .2s;
+}
+.badge:hover{border-color:var(--teal)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+.badge-plain{color:var(--muted);cursor:default}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* INPUT SECTION */
-.input-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:32px;margin-bottom:20px}
-.section-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.section-label::after{content:'';flex:1;height:1px;background:var(--brd)}
+/* ─── Formulář ───────────────────────────────────────────────────────── */
+.form-section-label{
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.16em;
+  color:var(--muted);margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.form-section-label::after{content:'';flex:1;height:1px;background:var(--brd)}
 
-.field{margin-bottom:18px}
-.field label{display:block;font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px}
+.inputs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:640px){.inputs-grid{grid-template-columns:1fr}}
+
+.input-panel{
+  background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:28px;
+  display:flex;flex-direction:column;
+}
+.input-panel-title{
+  font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;
+  margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--brd);
+  display:flex;align-items:center;gap:8px;
+}
+.panel-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-teal{background:var(--teal)}
+.dot-gold{background:var(--gold)}
+
+.params-bar{
+  background:var(--s1);border:1px solid var(--brd);border-radius:12px;
+  padding:22px 28px;margin-bottom:24px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;
+}
+@media(max-width:640px){.params-bar{grid-template-columns:1fr 1fr}}
+
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field label{
+  display:block;font-size:.75rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;
+}
+.opt-label{color:var(--gold);font-size:.68rem;margin-left:4px;text-transform:none;letter-spacing:0}
 input[type=text],input[type=number],select,textarea{
   width:100%;background:var(--s2);border:1px solid var(--brd);border-radius:6px;
-  padding:11px 15px;color:var(--txt);font-family:'IBM Plex Mono',monospace;font-size:.95rem;
+  padding:10px 14px;color:var(--txt);font-family:'IBM Plex Mono',monospace;font-size:.9rem;
   outline:none;transition:border-color .2s;resize:none;
 }
 input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 select option{background:var(--s2)}
+.hint{font-size:.72rem;color:var(--muted);margin-top:5px;font-family:'IBM Plex Mono',monospace;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:600px){.row2{grid-template-columns:1fr}}
+.checkboxes{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chk-item{
+  display:flex;align-items:center;gap:6px;
+  background:var(--s2);border:1px solid var(--brd);
+  padding:6px 11px;border-radius:6px;cursor:pointer;
+  font-size:.75rem;color:var(--muted);
+  transition:border-color .2s,color .2s,background .2s;
+  user-select:none;
+}
+.chk-item:hover{border-color:var(--teal);color:var(--txt)}
+.chk-item input[type=checkbox]{accent-color:var(--teal);width:13px;height:13px;cursor:pointer}
+.chk-item:has(input:checked){border-color:var(--teal);color:var(--txt);background:rgba(78,201,176,.07)}
 
-.hint{font-size:.78rem;color:var(--muted);margin-top:5px;font-family:'IBM Plex Mono',monospace;line-height:1.5}
-
-/* ANALYZE BTN */
 .analyze-btn{
   width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));
-  color:#0b0e13;border:none;padding:16px;border-radius:8px;
-  font-family:'Outfit',sans-serif;font-weight:600;font-size:.95rem;
+  color:#0b0e13;border:none;padding:15px;border-radius:8px;
+  font-family:'Outfit',sans-serif;font-weight:600;font-size:.9rem;
   text-transform:uppercase;letter-spacing:.1em;cursor:pointer;
-  transition:opacity .2s,transform .15s;margin-top:6px;
+  transition:opacity .2s,transform .15s;
   display:flex;align-items:center;justify-content:center;gap:10px;
 }
 .analyze-btn:hover{opacity:.88;transform:translateY(-1px)}
-.analyze-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.analyze-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.error-box{
+  background:#1a0a0a;border:1px solid var(--red);border-radius:8px;
+  padding:16px 20px;color:#f09090;font-size:.85rem;margin-top:14px;display:none;
+  font-family:'IBM Plex Mono',monospace;
+}
 
-/* LOADING */
-.loading-wrap{text-align:center;padding:60px 20px;display:none}
-.spinner{width:44px;height:44px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+/* ─── Načítání ───────────────────────────────────────────────────────── */
+.loading-wrap{text-align:center;padding:64px 20px;display:none}
+.spinner{width:40px;height:40px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-steps{font-size:.88rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;line-height:2}
+.loading-steps{font-size:.85rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;line-height:2.2}
 .loading-steps .active{color:var(--gold)}
 .loading-steps .done{color:var(--green)}
 
-/* RESULT */
+/* ─── Výsledky ────────────────────────────────────────────────────────── */
 #result{display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .45s ease both}
+.fade:nth-child(2){animation-delay:.07s}
+.fade:nth-child(3){animation-delay:.14s}
+.fade:nth-child(4){animation-delay:.21s}
+.fade:nth-child(5){animation-delay:.28s}
+.fade:nth-child(6){animation-delay:.35s}
+.fade:nth-child(7){animation-delay:.42s}
+.fade:nth-child(8){animation-delay:.49s}
+.fade:nth-child(9){animation-delay:.56s}
 
-/* VERDICT HERO */
+/* ─── Verdikt hero ───────────────────────────────────────────────────── */
 .verdict-hero{
-  background:var(--s1);border:1px solid var(--brd);border-radius:12px;
-  padding:36px;margin-bottom:24px;position:relative;overflow:hidden;
+  background:var(--s1);border:1px solid var(--brd);border-radius:14px;
+  padding:40px;margin-bottom:20px;position:relative;overflow:hidden;
 }
 .verdict-hero::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
   background:linear-gradient(90deg,var(--gold),var(--teal));
 }
-.vh-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px}
-.vh-winner{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3.5vw,2rem);font-weight:400;margin-bottom:6px}
-.vh-winner.lease{color:var(--teal)}
-.vh-winner.buy{color:var(--gold)}
-.vh-sub{font-size:.92rem;color:var(--muted);line-height:1.7;max-width:680px}
-.vh-saving{
-  position:absolute;top:36px;right:36px;text-align:right;
-}
-@media(max-width:640px){.vh-saving{position:static;margin-top:16px}}
-.vh-saving .big{font-family:'Playfair Display',serif;font-size:2rem;color:var(--green)}
-.vh-saving .sml{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+.vh-meta{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:12px}
+.vh-headline{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,4vw,2.2rem);font-weight:400;line-height:1.2;margin-bottom:10px}
+.vh-headline.lease{color:var(--teal)}
+.vh-headline.buy{color:var(--gold)}
+.vh-summary{font-size:.9rem;color:var(--muted);line-height:1.75;max-width:580px}
+.vh-saving{position:absolute;top:40px;right:40px;text-align:right}
+@media(max-width:600px){.vh-saving{position:static;margin-top:20px}}
+.vh-big{font-family:'Playfair Display',serif;font-size:2.4rem;line-height:1;color:var(--green)}
+.vh-big-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.vh-factors{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.vh-factor{background:var(--s2);border:1px solid var(--brd);padding:4px 11px;border-radius:20px;font-size:.7rem;color:var(--muted)}
 
-/* STATS GRID */
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
-@media(max-width:640px){.stats-grid{grid-template-columns:1fr 1fr}}
-.stat{background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:20px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.stat.g::before{background:var(--gold)}
-.stat.t::before{background:var(--teal)}
-.stat.gr::before{background:var(--green)}
-.stat.r::before{background:var(--red)}
-.stat-lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
-.stat-val{font-family:'Playfair Display',serif;font-size:1.5rem;line-height:1;margin-bottom:4px}
-.stat-val.g{color:var(--gold)}
-.stat-val.t{color:var(--teal)}
-.stat-val.gr{color:var(--green)}
-.stat-val.r{color:var(--red)}
-.stat-note{font-size:.78rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;line-height:1.5}
+/* ─── Hlavní srovnávací tabulka ──────────────────────────────────────── */
+.balance-card{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:0;margin-bottom:20px;overflow:hidden}
+.balance-card-title{padding:20px 28px 16px;font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+.balance-table{width:100%;border-collapse:collapse}
+.balance-table th{padding:12px 24px;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:400;text-align:left;border-bottom:1px solid var(--brd)}
+.balance-table th:not(:first-child){text-align:right}
+.balance-table td{padding:16px 24px;font-family:'IBM Plex Mono',monospace;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.balance-table tr:last-child td{border-bottom:none}
+.balance-table td:not(:first-child){text-align:right}
+.row-label{font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--txt)}
+.row-sub{font-size:.7rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.balance-table .total-row td{padding-top:20px;padding-bottom:20px;border-top:1px solid var(--brd)}
+.balance-table .total-row .row-label{font-family:'Playfair Display',serif;font-size:1rem}
+.balance-table .total-row td:not(:first-child){font-family:'Playfair Display',serif;font-size:1.15rem}
+.col-teal{color:var(--teal)}
+.col-gold{color:var(--gold)}
+.col-green{color:var(--green)}
+.col-red{color:var(--red)}
+.col-muted{color:var(--muted)}
+.col-winner{font-weight:600}
+.hl-teal{background:rgba(78,201,176,.04)}
+.hl-gold{background:rgba(212,168,67,.04)}
 
-/* TABLES */
+/* ─── Karty s detaily ────────────────────────────────────────────────── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:600px){.detail-grid{grid-template-columns:1fr}}
+.detail-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:24px;position:relative;overflow:hidden}
+.detail-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.dc-teal::before{background:var(--teal)}
+.dc-gold::before{background:var(--gold)}
+.dc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:12px}
+.dc-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;margin-bottom:14px;line-height:1.35}
+.dc-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.83rem}
+.dc-row:last-child{border-bottom:none}
+.dc-lbl{color:var(--muted)}
+.dc-val{font-family:'IBM Plex Mono',monospace;color:var(--txt)}
+.dc-val.t{color:var(--teal)}
+.dc-val.g{color:var(--gold)}
+.dc-val.gr{color:var(--green)}
+.tag-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.tag{background:rgba(78,201,176,.08);border:1px solid rgba(78,201,176,.18);color:var(--teal);padding:3px 9px;border-radius:4px;font-size:.7rem}
+
+/* ─── Investiční box ─────────────────────────────────────────────────── */
+.invest-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:28px;margin-bottom:20px}
+.invest-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400;margin-bottom:6px}
+.invest-sub{font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.invest-flow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.invest-box{background:var(--s2);border:1px solid var(--brd);border-radius:8px;padding:14px 20px;text-align:center;min-width:130px}
+.invest-box-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px}
+.invest-box-val{font-family:'Playfair Display',serif;font-size:1.25rem;line-height:1.2}
+.invest-box-val.green{color:var(--green)}
+.invest-arrow{color:var(--muted);font-size:1.2rem}
+.invest-note{font-size:.75rem;color:var(--muted);margin-top:14px;padding:10px 14px;background:var(--s2);border-radius:6px;font-family:'IBM Plex Mono',monospace}
+
+/* ─── Tabulka rok po roku ────────────────────────────────────────────── */
 .table-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:28px;margin-bottom:20px;overflow-x:auto}
-.tc-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;margin-bottom:20px}
-table{width:100%;border-collapse:collapse;font-size:.88rem}
-thead th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 10px 12px 0;border-bottom:1px solid var(--brd)}
-tbody td{padding:11px 10px 11px 0;border-bottom:1px solid rgba(255,255,255,.035);font-family:'IBM Plex Mono',monospace;font-size:.85rem;vertical-align:top}
+.table-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400;margin-bottom:18px}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+thead th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 10px 10px 0;border-bottom:1px solid var(--brd)}
+tbody td{padding:10px 10px 10px 0;border-bottom:1px solid rgba(255,255,255,.03);font-family:'IBM Plex Mono',monospace;font-size:.83rem;vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:hover{background:rgba(212,168,67,.03)}
-.pos{color:var(--green)}
-.neg{color:var(--red)}
-.neu{color:var(--muted)}
+.t{color:var(--teal)}.g{color:var(--gold)}.gr{color:var(--green)}.r{color:var(--red)}.m{color:var(--muted)}
 
-/* CHART */
+/* ─── Graf ───────────────────────────────────────────────────────────── */
 .chart-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:28px;margin-bottom:20px}
-.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
 .chart-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400}
-.legend{display:flex;gap:18px;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
-.leg-dot{width:9px;height:9px;border-radius:50%}
+.legend{display:flex;gap:16px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
 
-/* SOURCES */
-.sources{font-size:.78rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;line-height:1.8;margin-top:16px;padding:16px;background:var(--s2);border-radius:6px;border:1px solid var(--brd)}
-.sources strong{color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+/* ─── Proč tomu tak je ───────────────────────────────────────────────── */
+.why-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:28px;margin-bottom:20px}
+.why-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400;margin-bottom:18px}
+.why-points{display:flex;flex-direction:column;gap:14px}
+.why-point{display:flex;gap:14px;align-items:flex-start}
+.why-icon{width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;margin-top:2px}
+.why-h{font-size:.88rem;font-weight:500;margin-bottom:3px;color:var(--txt)}
+.why-p{font-size:.82rem;color:var(--muted);line-height:1.65}
 
-/* PROSE */
-.prose{font-size:.92rem;line-height:1.85;color:var(--txt);opacity:.9}
-.prose p{margin-bottom:10px}
-.prose strong{color:var(--gold);font-weight:500}
+/* ─── Kdy koupě / leasing ────────────────────────────────────────────── */
+.when-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:24px 28px;margin-bottom:20px}
+.when-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:10px}
+.when-text{font-size:.88rem;color:var(--txt);line-height:1.75;opacity:.85}
 
-/* FADE IN */
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fade{animation:fadeUp .4s ease both}
-.fade:nth-child(2){animation-delay:.08s}
-.fade:nth-child(3){animation-delay:.16s}
-.fade:nth-child(4){animation-delay:.24s}
-.fade:nth-child(5){animation-delay:.32s}
-.fade:nth-child(6){animation-delay:.4s}
+/* ─── Zdroje ─────────────────────────────────────────────────────────── */
+.sources-card{font-size:.75rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;line-height:1.9;padding:16px 20px;background:var(--s2);border-radius:8px;border:1px solid var(--brd)}
+.sources-card strong{display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em;font-weight:400}
 
-.error-box{background:#1f0e0e;border:1px solid var(--red);border-radius:8px;padding:20px;color:#f09090;font-size:.85rem;margin-top:16px;display:none}
-
-/* VERSION BADGE & CHANGELOG */
-.version-badge{
-  display:inline-flex;align-items:center;gap:7px;
-  background:var(--s2);border:1px solid var(--brd);
-  padding:5px 13px;border-radius:20px;
-  font-family:'IBM Plex Mono',monospace;font-size:.78rem;
-  color:var(--teal);letter-spacing:.06em;cursor:pointer;
-  transition:border-color .2s;
-}
-.version-badge:hover{border-color:var(--teal)}
-.version-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-.changelog-overlay{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
-  z-index:100;backdrop-filter:blur(4px);
-}
-.changelog-overlay.open{display:flex;align-items:center;justify-content:center;}
-.changelog-box{
-  background:var(--s1);border:1px solid var(--brd);border-radius:12px;
-  padding:36px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;
-  position:relative;
-}
-.changelog-box h2{
-  font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;
-  margin-bottom:24px;color:var(--txt);
-}
-.cl-version{margin-bottom:24px}
-.cl-version-header{
-  display:flex;align-items:center;gap:10px;margin-bottom:10px;
-}
-.cl-ver-num{
-  font-family:'IBM Plex Mono',monospace;font-size:.82rem;
-  color:var(--teal);background:var(--s2);border:1px solid var(--brd);
-  padding:3px 10px;border-radius:12px;
-}
-.cl-ver-date{font-size:.72rem;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+/* ─── Changelog ──────────────────────────────────────────────────────── */
+.changelog-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;backdrop-filter:blur(6px)}
+.changelog-overlay.open{display:flex;align-items:center;justify-content:center}
+.changelog-box{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:36px;max-width:540px;width:90%;max-height:82vh;overflow-y:auto;position:relative}
+.changelog-box h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;margin-bottom:24px}
+.cl-version{margin-bottom:22px}
+.cl-ver-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cl-ver-num{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--teal);background:var(--s2);border:1px solid var(--brd);padding:3px 10px;border-radius:12px}
+.cl-ver-date{font-size:.7rem;color:var(--muted);font-family:'IBM Plex Mono',monospace}
 .cl-ver-current .cl-ver-num{color:var(--gold);border-color:var(--gold)}
 .cl-items{list-style:none;padding:0}
-.cl-items li{
-  font-size:.82rem;color:var(--muted);padding:5px 0;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  padding-left:16px;position:relative;line-height:1.5;
-}
+.cl-items li{font-size:.8rem;color:var(--muted);padding:5px 0 5px 16px;border-bottom:1px solid rgba(255,255,255,.04);position:relative;line-height:1.5}
 .cl-items li::before{content:'·';position:absolute;left:0;color:var(--teal)}
 .cl-items li.fix::before{color:var(--red);content:'✗'}
 .cl-items li.new::before{color:var(--green);content:'✦'}
-.cl-close{
-  position:absolute;top:16px;right:16px;background:none;border:none;
-  color:var(--muted);font-size:1.2rem;cursor:pointer;padding:4px 8px;
-  border-radius:4px;transition:color .2s;
-}
+.cl-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .2s}
 .cl-close:hover{color:var(--txt)}
-
-/* CHECKBOXES */
-.checkboxes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.chk-item{
-  display:flex;align-items:center;gap:7px;
-  background:var(--s2);border:1px solid var(--brd);
-  padding:8px 14px;border-radius:8px;cursor:pointer;
-  font-size:.82rem;color:var(--muted);
-  transition:border-color .2s, color .2s, background .2s;
-  user-select:none;
-}
-.chk-item:hover{border-color:var(--teal);color:var(--txt)}
-.chk-item input[type=checkbox]{
-  accent-color:var(--teal);width:15px;height:15px;cursor:pointer;
-}
-.chk-item:has(input:checked){
-  border-color:var(--teal);color:var(--txt);
-  background:rgba(0,200,180,.07);
-}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+<!-- HEADER -->
 <header>
   <div class="header-inner">
     <div>
       <h1>Auto<em>Analýza</em> AI</h1>
-      <div class="tagline">Porovnání operativního leasingu vs. vlastní koupě · AI analýza</div>
+      <div class="tagline">Operativní leasing vs. koupě ojetého auta · AI analýza</div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <div class="version-badge" onclick="document.getElementById('changelogOverlay').classList.add('open')">
-        <span class="version-dot"></span>
-        v1.8.0
+    <div class="badges">
+      <div class="badge" onclick="document.getElementById('changelogOverlay').classList.add('open')">
+        <span class="badge-dot"></span>v1.9.0
       </div>
-      <div class="pill">Gemini AI</div>
+      <div class="badge badge-plain">Gemini AI</div>
     </div>
   </div>
 </header>
 
-<!-- CHANGELOG OVERLAY -->
+<!-- CHANGELOG -->
 <div class="changelog-overlay" id="changelogOverlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="changelog-box">
     <button class="cl-close" onclick="document.getElementById('changelogOverlay').classList.remove('open')">✕</button>
     <h2>Historie verzí</h2>
-
     <div class="cl-version cl-ver-current">
-      <div class="cl-version-header">
-        <span class="cl-ver-num">v1.8.0</span>
-        <span class="cl-ver-date">16. 4. 2026</span>
-      </div>
+      <div class="cl-ver-header"><span class="cl-ver-num">v1.9.0</span><span class="cl-ver-date">24. 4. 2026</span></div>
       <ul class="cl-items">
-        <li class="new">Přesun na Netlify — plná podpora security headers</li>
-        <li class="new">Content Security Policy, X-Frame-Options, X-Content-Type-Options</li>
-        <li class="new">Referrer-Policy, Permissions-Policy, COOP</li>
-        <li class="new">SRI integrita pro Chart.js CDN</li>
-        <li class="new">Meta description, canonical URL, Open Graph tagy</li>
-        <li class="new">security.txt (RFC 9116)</li>
-        <li class="fix">CORS Worker: wildcard → konkrétní doména</li>
+        <li class="new">Kompletní redesign — dvousloupcový formulář, čistší UI</li>
+        <li class="new">Hlavní bilance tabulka (přímé náklady / ztráta hodnoty / investice)</li>
+        <li class="new">Opravena investiční logika — investuje se plný budget uživatele</li>
+        <li class="new">Sekce "Proč tomu tak je" s kontextem a vysvětlením</li>
+        <li class="fix">Odstraněn konflikt response_mime_type + googleSearch</li>
+        <li class="fix">CORS wildcard → konkrétní doména (worker v8)</li>
       </ul>
     </div>
-
     <div class="cl-version">
-      <div class="cl-version-header">
-        <span class="cl-ver-num">v1.7.1</span>
-        <span class="cl-ver-date">6. 3. 2026</span>
-      </div>
+      <div class="cl-ver-header"><span class="cl-ver-num">v1.8.0</span><span class="cl-ver-date">16. 4. 2026</span></div>
       <ul class="cl-items">
-        <li class="new">Přepsán prompt — striktní pravidla pro JSON výstup</li>
-        <li class="new">Opraveny výpočty celkových nákladů leasingu</li>
-        <li class="fix">Opravena syntaktická chyba JS (totalMonths)</li>
-        <li class="fix">Opraveny CORS hlavičky pro mobilní prohlížeče</li>
+        <li class="new">Přesun na Cloudflare Pages, security headers</li>
+        <li class="new">SRI hash pro Chart.js CDN, security.txt</li>
       </ul>
     </div>
-
     <div class="cl-version">
-      <div class="cl-version-header">
-        <span class="cl-ver-num">v1.3.0</span>
-        <span class="cl-ver-date">6. 3. 2026</span>
-      </div>
+      <div class="cl-ver-header"><span class="cl-ver-num">v1.7.1</span><span class="cl-ver-date">6. 3. 2026</span></div>
       <ul class="cl-items">
-        <li class="new">Přechod na Gemini 2.5 Flash</li>
-        <li class="new">Worker v7 — sanitizace JSON kontrolních znaků</li>
-        <li class="fix">Opravena chyba Bad control character in JSON</li>
-        <li class="fix">Opraveny CORS chyby na mobilu</li>
+        <li class="new">Gemini 2.5 Flash, Worker v7, sanitizace JSON</li>
+        <li class="new">Verdikt počítá JS nezávisle na AI</li>
       </ul>
     </div>
-
-    <div class="cl-version">
-      <div class="cl-version-header">
-        <span class="cl-ver-num">v1.2.0</span>
-        <span class="cl-ver-date">5. 3. 2026</span>
-      </div>
-      <ul class="cl-items">
-        <li class="new">Přechod z Anthropic API na Google Gemini API (zdarma)</li>
-        <li class="new">Cloudflare Worker jako bezpečný backend proxy</li>
-        <li class="new">Nasazení na GitHub Pages</li>
-        <li class="fix">Opraveny CORS chyby při volání API</li>
-      </ul>
-    </div>
-
-    <div class="cl-version">
-      <div class="cl-version-header">
-        <span class="cl-ver-num">v1.1.0</span>
-        <span class="cl-ver-date">5. 3. 2026</span>
-      </div>
-      <ul class="cl-items">
-        <li class="new">Zvětšení písma v celé aplikaci</li>
-        <li class="new">Přidány hinty a popisky polí</li>
-      </ul>
-    </div>
-
-    <div class="cl-version">
-      <div class="cl-version-header">
-        <span class="cl-ver-num">v1.0.0</span>
-        <span class="cl-ver-date">5. 3. 2026</span>
-      </div>
-      <ul class="cl-items">
-        <li class="new">První verze aplikace</li>
-        <li class="new">AI analýza leasingu vs. koupě s web searchem</li>
-        <li class="new">Výpočet TCO, zůstatkové hodnoty a investičního výnosu</li>
-        <li class="new">Graf kumulativních nákladů, rok po roku tabulka</li>
-      </ul>
-    </div>
-
   </div>
 </div>
 
-<div class="input-card">
-  <div class="section-label">Co chcete porovnat?</div>
+<!-- FORMULÁŘ -->
+<div class="form-section-label">Co chcete porovnat?</div>
 
-  <div class="field">
-    <label>URL nebo název auta na operativní leasing</label>
-    <input type="text" id="leaseUrl" placeholder="https://www.driveto.cz/products/… nebo např. Cupra Ateca 1.5 TSI operativní leasing" value="https://www.driveto.cz/products/cupra-ateca-1-5-tsi-110-kw-natural-95-automaticka-prevodovka?variant=62529373241693">
-    <div class="hint">Stačí zadat URL z Driveto, AALeasing, Arval… nebo jen název auta</div>
-  </div>
-
-  <div class="row2">
-    <div class="field">
-      <label>Měsíční splátka leasingu (Kč / měs.) <span style="color:var(--gold);font-size:.7rem">— volitelné</span></label>
-      <input type="number" id="leaseMonthly" placeholder="např. 7622 — necháte prázdné = AI zjistí sama" step="100" min="0">
-      <div class="hint">Cenu zjistíte na webu leasingové společnosti · bez DPH nebo s DPH (DPH = 21 %)</div>
+<div class="inputs-grid">
+  <!-- LEASING -->
+  <div class="input-panel">
+    <div class="input-panel-title">
+      <span class="panel-dot dot-teal"></span>Operativní leasing
     </div>
     <div class="field">
-      <label>Akontace / záloha (Kč)</label>
-      <input type="number" id="leaseDeposit" placeholder="0" value="0" step="1000" min="0">
+      <label for="leaseUrl">URL nebo název auta</label>
+      <input type="text" id="leaseUrl"
+        placeholder="https://driveto.cz/… nebo Cupra Ateca 1.5 TSI"
+        value="https://www.driveto.cz/products/cupra-ateca-1-5-tsi-110-kw-natural-95-automaticka-prevodovka?variant=62529373241693">
+      <div class="hint">Driveto, AALeasing, Arval… nebo jen název vozu</div>
     </div>
-  </div>
-
-  <div class="field">
-    <label>Co je zahrnuto v měsíční splátce?</label>
-    <div class="checkboxes" id="includedServices">
-      <label class="chk-item"><input type="checkbox" value="pojistka" checked> Povinné ručení</label>
-      <label class="chk-item"><input type="checkbox" value="havarijko" checked> Havarijní pojištění</label>
-      <label class="chk-item"><input type="checkbox" value="servis"> Servis a údržba</label>
-      <label class="chk-item"><input type="checkbox" value="pneu"> Pneumatiky vč. přezutí</label>
-      <label class="chk-item"><input type="checkbox" value="silnicni-dan"> Silniční daň</label>
-      <label class="chk-item"><input type="checkbox" value="dalkova-znamka"> Dálniční známka</label>
-      <label class="chk-item"><input type="checkbox" value="asistence"> Asistence / silniční pomoc</label>
-      <label class="chk-item"><input type="checkbox" value="nahradni-vozidlo"> Náhradní vozidlo</label>
-    </div>
-  </div>
-
-  <div class="row2">
-    <div class="field">
-      <label>Rozpočet na ojeté auto (Kč)</label>
-      <input type="number" id="budget" value="500000" step="10000">
-      <div class="hint">Max. cena ojetiny, se kterou srovnáváte</div>
+    <div class="row2">
+      <div class="field">
+        <label for="leaseMonthly">Splátka (Kč/měs.)<span class="opt-label">volitelné</span></label>
+        <input type="number" id="leaseMonthly" placeholder="AI zjistí sama" step="100" min="0">
+      </div>
+      <div class="field">
+        <label for="leaseDeposit">Akontace (Kč)</label>
+        <input type="number" id="leaseDeposit" placeholder="0" value="0" step="1000" min="0">
+      </div>
     </div>
     <div class="field">
-      <label>Délka srovnání (roky)</label>
-      <select id="years">
-        <option value="2">2 roky</option>
-        <option value="3" selected>3 roky</option>
-        <option value="4">4 roky</option>
-        <option value="5">5 let</option>
-      </select>
+      <label>Co je zahrnuto ve splátce?</label>
+      <div class="checkboxes" id="includedServices">
+        <label class="chk-item"><input type="checkbox" value="pojistka" checked> Povinné ručení</label>
+        <label class="chk-item"><input type="checkbox" value="havarijko" checked> Havarijní poj.</label>
+        <label class="chk-item"><input type="checkbox" value="servis"> Servis</label>
+        <label class="chk-item"><input type="checkbox" value="pneu"> Pneumatiky</label>
+        <label class="chk-item"><input type="checkbox" value="silnicni-dan"> Silniční daň</label>
+        <label class="chk-item"><input type="checkbox" value="dalkova-znamka"> Dálniční známka</label>
+        <label class="chk-item"><input type="checkbox" value="asistence"> Asistence</label>
+        <label class="chk-item"><input type="checkbox" value="nahradni-vozidlo"> Náhr. vozidlo</label>
+      </div>
     </div>
   </div>
 
-  <div class="row2">
-    <div class="field">
-      <label>Roční nájezd (km)</label>
-      <select id="kmYear">
-        <option value="10000">10 000 km / rok</option>
-        <option value="15000" selected>15 000 km / rok</option>
-        <option value="20000">20 000 km / rok</option>
-        <option value="30000">30 000 km / rok</option>
-      </select>
+  <!-- KOUPĚ -->
+  <div class="input-panel">
+    <div class="input-panel-title">
+      <span class="panel-dot dot-gold"></span>Vlastní koupě ojetiny
     </div>
     <div class="field">
-      <label>Výnos investice (% p.a.)</label>
-      <input type="number" id="investRate" value="8" step="0.5" min="1" max="20">
-      <div class="hint">Pro výpočet portfolia z ušetřených peněz</div>
+      <label for="budget">Budget na ojeté auto (Kč)</label>
+      <input type="number" id="budget" value="500000" step="10000" min="50000">
+      <div class="hint">Tato částka by byla investována při leasingu</div>
+    </div>
+    <div class="field">
+      <label for="compareModels">Preferované modely<span class="opt-label">volitelné</span></label>
+      <input type="text" id="compareModels"
+        placeholder="VW Passat, Škoda Superb, Octavia… (AI vybere sama)">
+    </div>
+    <div class="field" style="margin-top:auto;padding-top:8px">
+      <div class="hint" style="font-size:.8rem;line-height:1.65">
+        AI najde konkrétní vůz v daném rozpočtu a odhadne pojistku, servis a zůstatkovou hodnotu po zvolené době.
+      </div>
     </div>
   </div>
-
-  <div class="field">
-    <label>Preferované srovnávané modely (volitelné)</label>
-    <input type="text" id="compareModels" placeholder="VW Passat, Škoda Superb, Octavia… (AI vybere sama, pokud necháte prázdné)">
-  </div>
-
-  <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    Analyzovat a porovnat
-  </button>
-  <div class="error-box" id="errBox"></div>
 </div>
 
-<!-- LOADING -->
+<!-- PARAMETRY -->
+<div class="params-bar">
+  <div class="field" style="margin:0">
+    <label for="years">Délka srovnání</label>
+    <select id="years">
+      <option value="2">2 roky</option>
+      <option value="3" selected>3 roky</option>
+      <option value="4">4 roky</option>
+      <option value="5">5 let</option>
+      <option value="6">6 let</option>
+    </select>
+  </div>
+  <div class="field" style="margin:0">
+    <label for="kmYear">Roční nájezd</label>
+    <select id="kmYear">
+      <option value="10000">10 000 km / rok</option>
+      <option value="15000" selected>15 000 km / rok</option>
+      <option value="20000">20 000 km / rok</option>
+      <option value="30000">30 000 km / rok</option>
+    </select>
+  </div>
+  <div class="field" style="margin:0">
+    <label for="investRate">Výnos investice (% p.a.)</label>
+    <input type="number" id="investRate" value="8" step="0.5" min="1" max="25">
+    <div class="hint">Předpokládaný roční výnos portfolia</div>
+  </div>
+</div>
+
+<button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+  </svg>
+  Analyzovat a porovnat
+</button>
+<div class="error-box" id="errBox"></div>
+
+<!-- NAČÍTÁNÍ -->
 <div class="loading-wrap" id="loadingWrap">
   <div class="spinner"></div>
   <div class="loading-steps" id="loadingSteps">
-    <div id="ls1">⟳ Načítám stránku leasingové nabídky…</div>
-    <div id="ls2">⟳ Hledám ceny ojetých vozů v ČR…</div>
+    <div id="ls1">⟳ Načítám leasingovou nabídku…</div>
+    <div id="ls2">⟳ Hledám ojetá auta v daném rozpočtu…</div>
     <div id="ls3">⟳ Zjišťuji náklady na pojištění a servis…</div>
     <div id="ls4">⟳ Propočítávám TCO a investiční výnos…</div>
-    <div id="ls5">⟳ Generuji přehledný report…</div>
+    <div id="ls5">⟳ Připravuji přehledný report…</div>
   </div>
 </div>
 
-<!-- RESULT -->
+<!-- VÝSLEDKY -->
 <div id="result"></div>
 
 </div>
@@ -453,284 +463,301 @@ tbody tr:hover{background:rgba(212,168,67,.03)}
 <script>
 let chartInst = null;
 
-function fmt(n){return Math.round(n).toLocaleString('cs')+' Kč'}
+function fmt(n){ return Math.round(n).toLocaleString('cs') + ' Kč'; }
 
 function setStep(n){
   for(let i=1;i<=5;i++){
-    const el=document.getElementById('ls'+i);
-    if(i<n){el.textContent='✓ '+el.textContent.replace('⟳ ','').replace('✓ ','');el.className='done'}
-    else if(i===n){el.className='active'}
+    const el = document.getElementById('ls'+i);
+    if(!el) continue;
+    if(i < n){ el.textContent = '✓ ' + el.textContent.replace(/^[⟳✓] /,''); el.className='done'; }
+    else if(i === n){ el.className='active'; }
+    else { el.className=''; }
   }
 }
 
 async function analyze(){
-  const leaseUrl=document.getElementById('leaseUrl').value.trim();
-  const leaseMonthly=document.getElementById('leaseMonthly').value.trim();
-  const leaseDeposit=document.getElementById('leaseDeposit').value||'0';
-  const includedChecked=[...document.querySelectorAll('#includedServices input:checked')].map(c=>c.value);
-  const budget=document.getElementById('budget').value;
-  const years=document.getElementById('years').value;
-  const kmYear=document.getElementById('kmYear').value;
-  const investRate=document.getElementById('investRate').value;
-  const compareModels=document.getElementById('compareModels').value.trim();
+  const leaseUrl      = document.getElementById('leaseUrl').value.trim();
+  const leaseMonthly  = document.getElementById('leaseMonthly').value.trim();
+  const leaseDeposit  = document.getElementById('leaseDeposit').value || '0';
+  const includedChecked = [...document.querySelectorAll('#includedServices input:checked')].map(c=>c.value);
+  const budget        = document.getElementById('budget').value;
+  const years         = document.getElementById('years').value;
+  const kmYear        = document.getElementById('kmYear').value;
+  const investRate    = document.getElementById('investRate').value;
+  const compareModels = document.getElementById('compareModels').value.trim();
 
-  if(!leaseUrl){alert('Zadejte prosím URL nebo název leasingovaného auta.');return}
+  if(!leaseUrl){ alert('Zadejte prosím URL nebo název leasingovaného auta.'); return; }
+  if(!budget || +budget < 50000){ alert('Zadejte prosím reálný budget (min. 50 000 Kč).'); return; }
 
-  document.getElementById('analyzeBtn').disabled=true;
-  document.getElementById('errBox').style.display='none';
-  document.getElementById('result').style.display='none';
-  document.getElementById('result').innerHTML='';
-  document.getElementById('loadingWrap').style.display='block';
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('errBox').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('loadingWrap').style.display = 'block';
 
-  // Animate loading steps
+  for(let i=1;i<=5;i++){
+    const el = document.getElementById('ls'+i);
+    if(el){ el.className=''; }
+  }
   setStep(1);
-  const stepTimer=setInterval(()=>{},800);
-  let stepIdx=1;
-  const stepInterval=setInterval(()=>{stepIdx++;if(stepIdx<=5)setStep(stepIdx);else clearInterval(stepInterval)},3500);
+  let stepIdx = 1;
+  const stepInterval = setInterval(()=>{ stepIdx++; if(stepIdx<=5) setStep(stepIdx); else clearInterval(stepInterval); }, 3800);
 
   const totalMonths = parseInt(years) * 12;
-  const prompt=`Jsi expert na TCO automobilu v Ceske republice. Odpovez POUZE cisty JSON bez backtiku, bez komentaru, bez markdown.
+
+  const prompt = `Jsi expert na TCO automobilu v Ceske republice. Odpovez POUZE cisty JSON bez backtiku, bez komentaru, bez markdown.
 
 ULOHA: Porovnej operativni leasing vs koupě ojeteho auta.
 
 LEASING: ${leaseUrl}
-${leaseMonthly ? '- Mesicni splatka zadana uzivatelem: ' + leaseMonthly + ' Kc/mes (pouzij TUTO hodnotu, nepocitej jinou)' : '- Zjisti mesicni splatku z URL nebo nazvu vozu'}
-- Akontace / zaloza: ${leaseDeposit} Kc
-- V splatce je zahrnuto: ${includedChecked.length>0 ? includedChecked.join(', ') : 'nezjisteno - odhadni'}
+${leaseMonthly ? '- Mesicni splatka zadana uzivatelem: ' + leaseMonthly + ' Kc/mes — pouzij TUTO hodnotu' : '- Zjisti mesicni splatku z URL nebo nazvu vozu'}
+- Akontace: ${leaseDeposit} Kc
+- V splatce zahrnuto: ${includedChecked.length > 0 ? includedChecked.join(', ') : 'odhadni dle nabidky'}
 - total_cost = mesicni_splatka * ${totalMonths} + ${leaseDeposit} + extras_annual * ${years}
-- extras_annual = naklady NEZAHRNUTY v splatce (napr. dalkova znamka 2300 Kc, dalsi pojisteni atd.)
+- extras_annual = rocni naklady NEZAHRNUTY v splatce (dalkova znamka 2300, dalsi pojisteni atd.)
 
-OJETE AUTO: rozpocet ${budget} Kc, modely: ${compareModels||'VW Passat nebo Skoda Superb nebo Skoda Octavia'}
-- Najdi konkretni ojety vuz do ${budget} Kc
-- Odhadni rocni naklady: pojistka + servis + ostatni
+OJETE AUTO: budget ${budget} Kc, preferovane modely: ${compareModels || 'VW Passat nebo Skoda Superb nebo Skoda Octavia'}
+- Najdi konkretni ojety vuz do ${budget} Kc s odpovidajici kvalitou k leasovanemu vozu
+- Rocni naklady: pojistka + servis + ostatni (POUZE co neni zahrnuto v leasingove splatce)
 - Zustatkova hodnota po ${years} letech v Kc
-- total_cost_net = cena - zustatkova_hodnota + (pojistka+servis+ostatni)*${years}
+- total_cost_net = price - residual_value + (insurance_annual + service_annual + other_annual) * ${years}
 
-INVESTICE: ${investRate}% p.a. po dobu ${years} let
-- invested_amount = cena ojeteho auta (buy.price), ne celkovy budget — investujes skutecnou usporenou castku
-- Spocitej final_portfolio = invested_amount * (1 + ${investRate}/100)^${years}
-- net_gain_after_tax = (final_portfolio - invested_amount) * 0.85
+INVESTICE (DULEZITE): ${investRate}% p.a. po dobu ${years} let
+- invested_amount = ${budget} Kc (PLNY BUDGET uzivatele — pri leasingu ti tato castka zustane k investovani)
+- final_portfolio = ${budget} * (1 + ${investRate}/100)^${years}
+- net_gain_after_tax = (final_portfolio - ${budget}) * 0.85 (15% dan z kapitalu)
 
-YEARLY TABLE: Pro kazdy rok 1 az ${years} spocitej kumulativni hodnoty.
+YEARLY TABLE: kumulativni naklady pro kazdy rok 1 az ${years}.
+- lease_cum: kumulativni splatky + akontace + extras k danemu roku
+- buy_cum: cena auta + kumulativni provoz k danemu roku (bez odectu ZH)
+- residual: zustatkova hodnota auta v danem roce
+- portfolio: hodnota portfolia v danem roce
+- lease_net: lease_cum - ciste_zisk_z_investice_k_danemu_roku
+- buy_net: buy_cum - residual
 
 PRAVIDLA PRO JSON:
-- Vsechna cisla jsou integery bez mezer
-- Textova pole: MAX 60 znaku, pouze bezna pismena a cisla, zadne uvozovky, zadne apostrofy, zadne lomitka
-- winner je bud "lease" nebo "buy"
-- included je pole max 5 kratkeych slov
+- Vsechna cisla jsou integery
+- Textova pole: MAX 55 znaku, pouze bezna pismena a cisla, zadne uvozovky ani apostrofy
+- winner je "lease" nebo "buy"
 
-{"leasing":{"name":"nazev max 50 zn","monthly":0,"deposit":0,"included":["sem dej skutecne zahrnute sluzby ze seznamu zadaneho uzivatelem"],"extras_annual":0,"total_cost":0,"notes":"poznamka max 50 zn"},
+{"leasing":{"name":"nazev max 50 zn","monthly":0,"deposit":0,"included":[],"extras_annual":0,"total_cost":0,"notes":"poznamka max 50 zn"},
 "buy":{"name":"model rok","year":2020,"km_odometer":80000,"price":0,"insurance_annual":0,"service_annual":0,"other_annual":0,"residual_value":0,"total_running":0,"total_cost_net":0,"notes":"poznamka max 50 zn"},
-"investment":{"invested_amount":0,"final_portfolio":0,"net_gain_gross":0,"net_gain_after_tax":0,"tax_note":"15 procent dan po 3 letech","monthly_diff":0},
+"investment":{"invested_amount":${budget},"final_portfolio":0,"net_gain_gross":0,"net_gain_after_tax":0,"tax_note":"15 procent dan z kapitalu"},
 "yearly_table":[{"year":1,"lease_cum":0,"buy_cum":0,"residual":0,"portfolio":0,"lease_net":0,"buy_net":0}],
-"verdict":{"winner":"lease","advantage_czk":0,"summary":"kratke shrnuti max 60 zn","when_buy_better":"kdy se vyplati max 60 zn","key_factors":["faktor1","faktor2","faktor3"]},
-"sources":["zdroj1","zdroj2"]}`;
+"verdict":{"winner":"lease","advantage_czk":0,"summary":"kratke shrnuti max 55 zn","when_buy_better":"kdy se vyplati max 55 zn","key_factors":["faktor1","faktor2","faktor3"]},
+"sources":[]}`;
 
   try {
-    // ↓ URL tvého Cloudflare Workeru
     const WORKER_URL = 'https://hidden-shape-fa54.coufal-milan.workers.dev';
-
-    const resp=await fetch(WORKER_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ prompt })
+    const resp = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
     });
 
     clearInterval(stepInterval);
     setStep(5);
 
-    const data=await resp.json();
-    if(data.error){throw new Error(data.error)}
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error);
 
-    // Extrahuj JSON z Gemini odpovědi
     const rawText = data.text || '';
-    const jsonMatch=rawText.match(/\{[\s\S]*\}/);
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
     if(!jsonMatch) throw new Error('AI nevrátila validní JSON. Zkuste to znovu.');
-    const d=JSON.parse(jsonMatch[0]);
+    const d = JSON.parse(jsonMatch[0]);
 
-    renderResult(d, +years, +investRate, +kmYear);
+    renderResult(d, +years, +investRate, +kmYear, +budget);
 
   } catch(e) {
     clearInterval(stepInterval);
-    document.getElementById('loadingWrap').style.display='none';
-    const eb=document.getElementById('errBox');
-    eb.style.display='block';
-    eb.textContent='Chyba: '+e.message;
-    document.getElementById('analyzeBtn').disabled=false;
+    document.getElementById('loadingWrap').style.display = 'none';
+    const eb = document.getElementById('errBox');
+    eb.style.display = 'block';
+    eb.textContent = 'Chyba: ' + e.message;
+    document.getElementById('analyzeBtn').disabled = false;
   }
 }
 
-function renderResult(d, years, investRate, kmYear){
-  document.getElementById('loadingWrap').style.display='none';
-  document.getElementById('analyzeBtn').disabled=false;
+function renderResult(d, years, investRate, kmYear, budget){
+  document.getElementById('loadingWrap').style.display = 'none';
+  document.getElementById('analyzeBtn').disabled = false;
 
-  // ── Přepočítej verdikt přímo v JS, nezávisle na AI ──────────────────
-  // Leasing: zaplatíš splátky celkem, ale investuješ uspořenou pořizovací cenu
-  //          → výhoda = pouze ZISK z investice (net_gain_after_tax), ne celé portfolio
-  //          Investovaná jistina je stále tvoje — není to "zisk navíc"
-  const leaseTotalCost = d.leasing.total_cost;
+  /* ── Investice: plný budget uživatele ────────────────────────────────── */
+  const investedAmount  = budget;
+  const finalPortfolio  = investedAmount * Math.pow(1 + investRate / 100, years);
+  const netGainGross    = finalPortfolio - investedAmount;
+  const investGain      = netGainGross * 0.85;
 
-  // Přepočítej investiční zisk přímo v JS z buy.price (ne z AI invested_amount který může být špatně)
-  const investedAmount = d.buy.price || d.investment.invested_amount || 0;
-  const investYears = years;
-  const finalPortfolio = investedAmount * Math.pow(1 + investRate/100, investYears);
-  const netGainGross = finalPortfolio - investedAmount;
-  const investGain = netGainGross * 0.85; // 15% daň z výnosu
-
-  // Přepiš hodnoty v datech aby stats grid ukazoval správné číslo
-  d.investment.invested_amount = investedAmount;
-  d.investment.final_portfolio = Math.round(finalPortfolio);
-  d.investment.net_gain_gross = Math.round(netGainGross);
+  d.investment.invested_amount    = investedAmount;
+  d.investment.final_portfolio    = Math.round(finalPortfolio);
+  d.investment.net_gain_gross     = Math.round(netGainGross);
   d.investment.net_gain_after_tax = Math.round(investGain);
 
-  // Koupě: čisté náklady = pořizovací cena − zůstatková hodnota + provoz
-  // Přepočítej přímo z komponent pokud AI total_cost_net sedí
-  const buyTotalCostRecalc = d.buy.price - d.buy.residual_value + d.buy.total_running;
-  const buyTotalCost = buyTotalCostRecalc > 0 ? buyTotalCostRecalc : d.buy.total_cost_net;
+  /* ── Náklady leasingu ────────────────────────────────────────────────── */
+  const leaseRecalc = d.leasing.monthly * years * 12 + (d.leasing.deposit || 0) + d.leasing.extras_annual * years;
+  if(leaseRecalc > 0) d.leasing.total_cost = leaseRecalc;
+  const leaseTotalCost = d.leasing.total_cost;
+
+  /* ── Náklady koupě ───────────────────────────────────────────────────── */
+  const buyDirectCosts = (d.buy.insurance_annual + d.buy.service_annual + d.buy.other_annual) * years;
+  const buyValueLoss   = d.buy.price - d.buy.residual_value;
+  const buyTotalCost   = buyDirectCosts + buyValueLoss;
   d.buy.total_cost_net = buyTotalCost;
 
-  // Přepočítej leasing total_cost pokud máme komponenty
-  const leaseRecalc = d.leasing.monthly * years * 12 + (d.leasing.deposit||0) + d.leasing.extras_annual * years;
-  if (leaseRecalc > 0) { d.leasing.total_cost = leaseRecalc; }
-  const leaseTotalCostFinal = d.leasing.total_cost;
-
-  // Srovnání: Leasing efektivní náklad = splátky − čistý zisk z investice
-  const leaseNetCost = leaseTotalCostFinal - investGain;
-  const buyNetCost = buyTotalCost;
-
-  const leaseWins = leaseNetCost < buyNetCost;
-  const adv = Math.abs(leaseNetCost - buyNetCost);
-
-  // Oprav verdict v datech
-  d.verdict.winner = leaseWins ? 'lease' : 'buy';
+  /* ── Verdikt ─────────────────────────────────────────────────────────── */
+  const leaseNetCost = leaseTotalCost - investGain;
+  const buyNetCost   = buyTotalCost;
+  const leaseWins    = leaseNetCost < buyNetCost;
+  const adv          = Math.abs(leaseNetCost - buyNetCost);
+  d.verdict.winner        = leaseWins ? 'lease' : 'buy';
   d.verdict.advantage_czk = adv;
 
-  // Build HTML
-  let html='';
+  const yearsLabel = years >= 5 ? 'let' : 'roky';
+  let html = '';
 
-  // VERDICT HERO
-  html+=`<div class="verdict-hero fade">
+  /* 1 ── VERDIKT HERO */
+  html += `<div class="verdict-hero fade">
     <div class="vh-saving">
-      <div class="big">${fmt(adv)}</div>
-      <div class="sml">${leaseWins?'úspora u leasingu':'úspora u koupě'}</div>
+      <div class="vh-big">${fmt(adv)}</div>
+      <div class="vh-big-label">${leaseWins ? 'úspora u leasingu' : 'úspora u koupě'}</div>
     </div>
-    <div class="vh-label">Výsledek AI analýzy · ${years} roky · ${(kmYear/1000).toFixed(0)} 000 km/rok</div>
-    <div class="vh-winner ${leaseWins?'lease':'buy'}">${leaseWins?'✦ Operativní leasing je výhodnější':'✦ Koupě ojetého auta je výhodnější'}</div>
-    <div class="vh-sub">${d.verdict.summary}</div>
-    ${d.verdict.key_factors?`<div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px">${d.verdict.key_factors.map(f=>`<span style="background:var(--s2);border:1px solid var(--brd);padding:4px 10px;border-radius:20px;font-size:.7rem;color:var(--muted)">${f}</span>`).join('')}</div>`:''}
+    <div class="vh-meta">AI analýza · ${years} ${yearsLabel} · ${(kmYear/1000).toFixed(0)} 000 km/rok · výnos ${investRate} % p.a.</div>
+    <div class="vh-headline ${leaseWins?'lease':'buy'}">
+      ${leaseWins ? '✦ Operativní leasing je výhodnější' : '✦ Koupě ojetého auta je výhodnější'}
+    </div>
+    <div class="vh-summary">${d.verdict.summary}</div>
+    ${d.verdict.key_factors && d.verdict.key_factors.length
+      ? `<div class="vh-factors">${d.verdict.key_factors.map(f=>`<span class="vh-factor">${f}</span>`).join('')}</div>`
+      : ''}
   </div>`;
 
-  // STATS
-  html+=`<div class="stats-grid fade">
-    <div class="stat t">
-      <div class="stat-lbl">Celk. náklady — Leasing</div>
-      <div class="stat-val t">${fmt(leaseTotalCostFinal)}</div>
-      <div class="stat-note">${d.leasing.monthly.toLocaleString('cs')} Kč/měs. · ${years}r.</div>
-    </div>
-    <div class="stat g">
-      <div class="stat-lbl">Čisté náklady — Koupě</div>
-      <div class="stat-val g">${fmt(d.buy.total_cost_net)}</div>
-      <div class="stat-note">Po odečtu ZH ${fmt(d.buy.residual_value)}</div>
-    </div>
-    <div class="stat gr">
-      <div class="stat-lbl">Investiční portfolio</div>
-      <div class="stat-val gr">${fmt(d.investment.final_portfolio)}</div>
-      <div class="stat-note">Zisk ${fmt(d.investment.net_gain_after_tax)} po dani</div>
-    </div>
-    <div class="stat t">
-      <div class="stat-lbl">Splátka leasingu / měsíc</div>
-      <div class="stat-val t">${fmt(d.leasing.monthly)}</div>
-      <div class="stat-note">${d.leasing.included&&d.leasing.included.length?'Vč: '+d.leasing.included.slice(0,3).join(', '):''}</div>
-    </div>
-    <div class="stat g">
-      <div class="stat-lbl">Pojistka + servis (koupě)</div>
-      <div class="stat-val g">${fmt((d.buy.insurance_annual+d.buy.service_annual)*years)}</div>
-      <div class="stat-note">${fmt(d.buy.insurance_annual+d.buy.service_annual)}/rok</div>
-    </div>
-    <div class="stat r">
-      <div class="stat-lbl">Pokles hodnoty ojetiny</div>
-      <div class="stat-val r">${fmt(d.buy.price-d.buy.residual_value)}</div>
-      <div class="stat-note">${fmt(d.buy.price)} → ${fmt(d.buy.residual_value)}</div>
-    </div>
-  </div>`;
-
-  // COMPARISON TABLE
-  html+=`<div class="table-card fade">
-    <div class="tc-title">Podrobné srovnání nákladů</div>
-    <table>
+  /* 2 ── FINANČNÍ BILANCE */
+  const hlLease = leaseWins ? 'hl-teal' : '';
+  const hlBuy   = !leaseWins ? 'hl-gold' : '';
+  html += `<div class="balance-card fade">
+    <div class="balance-card-title">Finanční bilance po ${years} ${yearsLabel}</div>
+    <table class="balance-table">
       <thead><tr>
         <th>Položka</th>
-        <th>Operativní leasing<br><span style="color:var(--teal);font-weight:400">${d.leasing.name}</span></th>
-        <th>Koupě ojetiny<br><span style="color:var(--gold);font-weight:400">${d.buy.name} (${d.buy.year}, ${(d.buy.km_odometer/1000).toFixed(0)}k km)</span></th>
+        <th class="col-teal">Leasing<br><span style="font-size:.67rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:none;letter-spacing:0">${d.leasing.name}</span></th>
+        <th class="col-gold">Vlastní koupě<br><span style="font-size:.67rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;text-transform:none;letter-spacing:0">${d.buy.name}</span></th>
       </tr></thead>
       <tbody>
-        <tr><td class="neu">Pořizovací výdaj</td><td>${d.leasing.deposit?fmt(d.leasing.deposit):'0 Kč (žádná akontace)'}</td><td>${fmt(d.buy.price)}</td></tr>
-        <tr><td class="neu">Měsíční splátka / platba</td><td class="pos">${fmt(d.leasing.monthly)}/měs.</td><td class="neu">—</td></tr>
-        <tr><td class="neu">Pojistka (${years} roky)</td><td class="pos">${d.leasing.included&&d.leasing.included.some(i=>i.toLowerCase().includes('poj'))?'<span class="pos">V ceně ✓</span>':'Mimo splátku'}</td><td>${fmt(d.buy.insurance_annual*years)}</td></tr>
-        <tr><td class="neu">Servis a údržba (${years} roky)</td><td class="pos">${d.leasing.included&&d.leasing.included.some(i=>i.toLowerCase().includes('serv'))?'<span class="pos">V ceně ✓</span>':'Mimo splátku'}</td><td>${fmt(d.buy.service_annual*years)}</td></tr>
-        <tr><td class="neu">Ostatní (STK, dálniční zn.)</td><td>${fmt(d.leasing.extras_annual*years)}</td><td>${fmt(d.buy.other_annual*years)}</td></tr>
-        <tr><td class="neu">Zůstatková hodnota auta</td><td class="neu">—&nbsp;<span style="font-size:.68rem">(auto vracíte)</span></td><td class="pos">+ ${fmt(d.buy.residual_value)}</td></tr>
-        <tr style="border-top:1px solid var(--brd)"><td><strong>CELKEM čisté náklady</strong></td><td><strong class="t">${fmt(d.leasing.total_cost)}</strong></td><td><strong class="g">${fmt(d.buy.total_cost_net)}</strong></td></tr>
+        <tr>
+          <td><div class="row-label">Přímé provozní náklady</div><div class="row-sub">splátky / pojistka / servis / ostatní</div></td>
+          <td class="col-teal ${hlLease}">${fmt(leaseTotalCost)}</td>
+          <td class="col-gold ${hlBuy}">${fmt(buyDirectCosts)}</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Ztráta hodnoty vozu</div><div class="row-sub">pořizovací cena − zůstatková hodnota po ${years} ${yearsLabel}</div></td>
+          <td class="col-muted ${hlLease}">— <span style="font-size:.72rem">(auto vracíte)</span></td>
+          <td class="col-red ${hlBuy}">${fmt(buyValueLoss)}</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Výnos z investovaných ${fmt(budget)}</div><div class="row-sub">${investRate} % p.a. · ${years} ${yearsLabel} · čistý zisk po 15% dani</div></td>
+          <td class="col-green ${hlLease}">− ${fmt(investGain)}</td>
+          <td class="col-muted ${hlBuy}">—</td>
+        </tr>
+        <tr class="total-row">
+          <td><div class="row-label">Celková finanční bilance</div></td>
+          <td class="col-teal ${hlLease} ${leaseWins?'col-winner':''}">${fmt(leaseNetCost)}${leaseWins?' ✦':''}</td>
+          <td class="col-gold ${hlBuy} ${!leaseWins?'col-winner':''}">${fmt(buyNetCost)}${!leaseWins?' ✦':''}</td>
+        </tr>
       </tbody>
     </table>
   </div>`;
 
-  // YEAR TABLE
-  if(d.yearly_table&&d.yearly_table.length){
-    html+=`<div class="table-card fade">
-      <div class="tc-title">Vývoj nákladů rok po roku</div>
+  /* 3 ── DETAIL KARTY */
+  const leasePoj  = d.leasing.included && d.leasing.included.some(i=>/poj|pov/i.test(i));
+  const leaseServ = d.leasing.included && d.leasing.included.some(i=>/serv/i.test(i));
+
+  html += `<div class="detail-grid fade">
+    <div class="detail-card dc-teal">
+      <div class="dc-title">Leasing — podrobnosti</div>
+      <div class="dc-name">${d.leasing.name}</div>
+      <div class="dc-row"><span class="dc-lbl">Měsíční splátka</span><span class="dc-val t">${fmt(d.leasing.monthly)}/měs.</span></div>
+      <div class="dc-row"><span class="dc-lbl">Akontace</span><span class="dc-val">${d.leasing.deposit ? fmt(d.leasing.deposit) : '0 Kč'}</span></div>
+      <div class="dc-row"><span class="dc-lbl">Splátky celkem (${years}r.)</span><span class="dc-val">${fmt(d.leasing.monthly * years * 12)}</span></div>
+      <div class="dc-row"><span class="dc-lbl">Náklady mimo splátku</span><span class="dc-val">${fmt(d.leasing.extras_annual * years)}</span></div>
+      ${d.leasing.notes ? `<div class="dc-row"><span class="dc-lbl">Poznámka</span><span class="dc-val" style="font-size:.75rem">${d.leasing.notes}</span></div>` : ''}
+      ${d.leasing.included && d.leasing.included.length ? `
+      <div style="margin-top:10px">
+        <div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">V ceně splátky</div>
+        <div class="tag-list">${d.leasing.included.map(i=>`<span class="tag">${i}</span>`).join('')}</div>
+      </div>` : ''}
+    </div>
+    <div class="detail-card dc-gold">
+      <div class="dc-title">Koupě ojetiny — podrobnosti</div>
+      <div class="dc-name">${d.buy.name} · ${d.buy.year} · ${Math.round(d.buy.km_odometer/1000)}k km</div>
+      <div class="dc-row"><span class="dc-lbl">Pořizovací cena</span><span class="dc-val g">${fmt(d.buy.price)}</span></div>
+      <div class="dc-row"><span class="dc-lbl">Pojistka / rok</span><span class="dc-val">${leasePoj ? `<span style="color:var(--teal);font-size:.8rem">✓ v leasingu</span>` : fmt(d.buy.insurance_annual)}</span></div>
+      <div class="dc-row"><span class="dc-lbl">Servis / rok</span><span class="dc-val">${leaseServ ? `<span style="color:var(--teal);font-size:.8rem">✓ v leasingu</span>` : fmt(d.buy.service_annual)}</span></div>
+      <div class="dc-row"><span class="dc-lbl">Ostatní / rok (STK, zn.)</span><span class="dc-val">${fmt(d.buy.other_annual)}</span></div>
+      <div class="dc-row"><span class="dc-lbl">Zůstatková hodnota</span><span class="dc-val gr">+ ${fmt(d.buy.residual_value)}</span></div>
+      ${d.buy.notes ? `<div class="dc-row"><span class="dc-lbl">Poznámka</span><span class="dc-val" style="font-size:.75rem">${d.buy.notes}</span></div>` : ''}
+    </div>
+  </div>`;
+
+  /* 4 ── INVESTICE */
+  html += `<div class="invest-card fade">
+    <div class="invest-title">💹 Investiční výnos při leasingu</div>
+    <div class="invest-sub">Při leasingu ti zůstane <strong style="color:var(--txt)">${fmt(budget)}</strong> v kapse — tuto částku můžeš investovat. Do srovnání vstupuje pouze čistý zisk po dani, protože jistina je tvoje v obou scénářích.</div>
+    <div class="invest-flow">
+      <div class="invest-box">
+        <div class="invest-box-label">Investice</div>
+        <div class="invest-box-val">${fmt(investedAmount)}</div>
+      </div>
+      <div class="invest-arrow">→</div>
+      <div class="invest-box">
+        <div class="invest-box-label">Portfolio po ${years} r.</div>
+        <div class="invest-box-val">${fmt(d.investment.final_portfolio)}</div>
+      </div>
+      <div class="invest-arrow">→</div>
+      <div class="invest-box">
+        <div class="invest-box-label">Čistý zisk po dani</div>
+        <div class="invest-box-val green">+ ${fmt(investGain)}</div>
+      </div>
+    </div>
+    <div class="invest-note">${d.investment.tax_note} · Při ETF/akciích osvobozeno po 3 letech držení (§ 4 odst. 1 písm. w) ZDP)</div>
+  </div>`;
+
+  /* 5 ── ROK PO ROKU */
+  if(d.yearly_table && d.yearly_table.length){
+    html += `<div class="table-card fade">
+      <div class="table-title">Vývoj nákladů rok po roku</div>
       <table>
         <thead><tr>
-          <th>Rok</th><th>Leasing (kum.)</th><th>Koupě (kum.)</th><th>Zůst. hodnota</th><th>Portfolio</th><th>Výhodnost</th>
+          <th>Rok</th>
+          <th style="color:var(--teal)">Leasing kum.</th>
+          <th style="color:var(--gold)">Koupě kum.</th>
+          <th>Zůst. hodnota</th>
+          <th>Portfolio</th>
+          <th>Kdo vede</th>
         </tr></thead>
         <tbody>
-          ${d.yearly_table.map(r=>`<tr>
-            <td><strong>Rok ${r.year}</strong></td>
-            <td class="t">${fmt(r.lease_cum)}</td>
-            <td class="g">${fmt(r.buy_cum)}</td>
-            <td class="pos">${fmt(r.residual)}</td>
-            <td class="pos">${fmt(r.portfolio)}</td>
-            ${(()=>{const gain=Math.max(0,(r.portfolio||0)-(d.investment.invested_amount||d.buy.price||0));const lNet=r.lease_cum-gain;const bNet=r.buy_net;const lWins=lNet<bNet;return '<td class="'+(lWins?'pos':'neg')+'">'+(lWins?'↑ Leasing':'↑ Koupě')+' o '+fmt(Math.abs(lNet-bNet))+'</td>';})()}
-          </tr>`).join('')}
+          ${d.yearly_table.map(r => {
+            const yGain = Math.max(0, (r.portfolio || 0) - investedAmount) * 0.85;
+            const lNet  = r.lease_cum - yGain;
+            const bNet  = (r.buy_net != null) ? r.buy_net : (r.buy_cum - (r.residual || 0));
+            const lW    = lNet < bNet;
+            return `<tr>
+              <td><strong>Rok ${r.year}</strong></td>
+              <td class="t">${fmt(r.lease_cum)}</td>
+              <td class="g">${fmt(r.buy_cum)}</td>
+              <td class="gr">${fmt(r.residual)}</td>
+              <td class="gr">${fmt(r.portfolio)}</td>
+              <td class="${lW?'gr':'r'}" style="font-size:.8rem">${lW?'↑ Leasing':'↑ Koupě'}</td>
+            </tr>`;
+          }).join('')}
         </tbody>
       </table>
     </div>`;
   }
 
-  // INVESTMENT BOX
-  html+=`<div class="table-card fade">
-    <div class="tc-title">💹 Investiční výnos z ušetřených peněz</div>
-    <div class="prose">
-      <p>Při operativním leasingu neváznete <strong>${fmt(d.investment.invested_amount)}</strong> v autě — tuto částku můžete investovat. Výsledná jistina je stále vaše v obou scénářích, proto do porovnání vstupuje pouze <strong>čistý zisk z investice po dani</strong>, který snižuje efektivní náklady leasingu.</p>
-      <p style="font-size:.8rem;color:var(--muted);margin-top:8px">Výnos ${investRate}% p.a. · ${years} let · daň 15 % (osvobozeno po 3 letech)</p>
-    </div>
-    <div class="stats-grid" style="margin-top:16px;margin-bottom:16px">
-      <div class="stat gr" style="grid-column:span 1">
-        <div class="stat-lbl">Počáteční investice</div>
-        <div class="stat-val gr" style="font-size:1.3rem">${fmt(d.investment.invested_amount)}</div>
-      </div>
-      <div class="stat gr">
-        <div class="stat-lbl">Výsledné portfolio</div>
-        <div class="stat-val gr" style="font-size:1.3rem">${fmt(d.investment.final_portfolio)}</div>
-      </div>
-      <div class="stat gr">
-        <div class="stat-lbl">Čistý zisk (po dani)</div>
-        <div class="stat-val gr" style="font-size:1.3rem">${fmt(d.investment.net_gain_after_tax)}</div>
-      </div>
-    </div>
-    <div class="sources"><strong>Poznámka k daním</strong>${d.investment.tax_note}</div>
-  </div>`;
-
-  // WHEN BUY BETTER
-  html+=`<div class="table-card fade">
-    <div class="tc-title">Kdy by se naopak vyplatila koupě?</div>
-    <div class="prose"><p>${d.verdict.when_buy_better}</p></div>
-  </div>`;
-
-  // CHART
-  if(d.yearly_table&&d.yearly_table.length){
-    html+=`<div class="chart-card fade">
-      <div class="chart-hdr">
+  /* 6 ── GRAF */
+  if(d.yearly_table && d.yearly_table.length){
+    html += `<div class="chart-card fade">
+      <div class="chart-header">
         <div class="chart-title">Kumulativní náklady v čase</div>
         <div class="legend">
           <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Leasing</div>
@@ -738,30 +765,71 @@ function renderResult(d, years, investRate, kmYear){
           <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Leasing po investici</div>
         </div>
       </div>
-      <canvas id="mainChart" height="260"></canvas>
+      <canvas id="mainChart" height="240"></canvas>
     </div>`;
   }
 
-  // SOURCES
-  if(d.sources&&d.sources.length){
-    html+=`<div class="fade sources" style="margin-top:0"><strong>Zdroje dat</strong>${d.sources.map(s=>`<div>· ${s}</div>`).join('')}</div>`;
+  /* 7 ── PROČ TOMU TAK JE */
+  const w1text = leaseWins
+    ? `Klíčový faktor: ${fmt(budget)}, které při leasingu pracují pro tebe. Čistý investiční zisk ${fmt(investGain)} snižuje efektivní náklady leasingu pod náklady koupě.`
+    : `I přes investiční výnos ${fmt(investGain)} vychází koupě levněji. Nízká ztráta hodnoty vozu nebo vysoké leasingové splátky hovoří ve prospěch koupě.`;
+
+  html += `<div class="why-card fade">
+    <div class="why-title">Proč tomu tak je?</div>
+    <div class="why-points">
+      <div class="why-point">
+        <div class="why-icon">📈</div>
+        <div>
+          <div class="why-h">Investiční páka</div>
+          <div class="why-p">${w1text}</div>
+        </div>
+      </div>
+      <div class="why-point">
+        <div class="why-icon">🚗</div>
+        <div>
+          <div class="why-h">${leaseWins ? 'Nové auto vs. stárnoucí ojetina' : 'Ojetina si drží hodnotu'}</div>
+          <div class="why-p">${leaseWins
+            ? `U leasingu jezdíš v novém autě se zárukou a nulovým rizikem drahých oprav. U ojetiny za ${fmt(d.buy.price)} počítej s rostoucími servisními náklady zejména ve druhé polovině období.`
+            : `${d.buy.name} si po ${years} ${yearsLabel} drží zůstatkovou hodnotu ${fmt(d.buy.residual_value)}, což výrazně snižuje čisté náklady vlastnictví.`
+          }</div>
+        </div>
+      </div>
+      <div class="why-point">
+        <div class="why-icon">📋</div>
+        <div>
+          <div class="why-h">Srovnání zahrnuje stejné položky</div>
+          <div class="why-p">Leasing zahrnuje ve splátce: ${d.leasing.included && d.leasing.included.length ? d.leasing.included.join(', ') : 'základní služby'}. Tyto položky u ojetiny platíš zvlášť — v tabulce jsou zahrnuty v přímých nákladech koupě.</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  /* 8 ── KDY BY SE VYPLATILA DRUHÁ VARIANTA */
+  html += `<div class="when-card fade">
+    <div class="when-label">Kdy by se vyplatila ${leaseWins ? 'koupě ojetiny' : 'operativní leasing'}?</div>
+    <div class="when-text">${d.verdict.when_buy_better}</div>
+  </div>`;
+
+  /* 9 ── ZDROJE */
+  if(d.sources && d.sources.length){
+    html += `<div class="sources-card fade"><strong>Zdroje dat</strong>${d.sources.map(s=>`<div>· ${s}</div>`).join('')}</div>`;
   }
 
-  const resultEl=document.getElementById('result');
-  resultEl.innerHTML=html;
-  resultEl.style.display='block';
+  const resultEl = document.getElementById('result');
+  resultEl.innerHTML = html;
+  resultEl.style.display = 'block';
 
-  // Draw chart
-  if(d.yearly_table&&d.yearly_table.length){
+  /* Graf */
+  if(d.yearly_table && d.yearly_table.length){
     if(chartInst) chartInst.destroy();
-    chartInst=new Chart(document.getElementById('mainChart'),{
-      type:'line',
-      data:{
-        labels:d.yearly_table.map(r=>'Rok '+r.year),
-        datasets:[
-          {label:'Leasing',data:d.yearly_table.map(r=>r.lease_cum),borderColor:'#4ec9b0',backgroundColor:'rgba(78,201,176,.07)',borderWidth:2.5,pointRadius:5,tension:.35,fill:true},
-          {label:'Koupě (čistě)',data:d.yearly_table.map(r=>r.buy_cum),borderColor:'#d4a843',backgroundColor:'rgba(212,168,67,.06)',borderWidth:2.5,pointRadius:5,tension:.35,fill:true},
-          {label:'Leasing po investici',data:d.yearly_table.map(r=>r.lease_cum-Math.max(0,(r.portfolio||0)-(d.investment.invested_amount||0))),borderColor:'#56c77a',borderWidth:2,pointRadius:3,borderDash:[5,4],tension:.35},
+    chartInst = new Chart(document.getElementById('mainChart'), {
+      type: 'line',
+      data: {
+        labels: d.yearly_table.map(r => 'Rok ' + r.year),
+        datasets: [
+          { label:'Leasing', data:d.yearly_table.map(r=>r.lease_cum), borderColor:'#4ec9b0', backgroundColor:'rgba(78,201,176,.06)', borderWidth:2.5, pointRadius:5, tension:.35, fill:true },
+          { label:'Koupě (čistě)', data:d.yearly_table.map(r=>r.buy_cum), borderColor:'#d4a843', backgroundColor:'rgba(212,168,67,.05)', borderWidth:2.5, pointRadius:5, tension:.35, fill:true },
+          { label:'Leasing po investici', data:d.yearly_table.map(r=>{ const g=Math.max(0,(r.portfolio||0)-investedAmount)*0.85; return r.lease_cum-g; }), borderColor:'#56c77a', borderWidth:2, pointRadius:3, borderDash:[5,4], tension:.35 }
         ]
       },
       options:{
